@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="p-5 mb-4 bg-light rounded-3">
+        <div class="container-fluid py-5">
+            <h1 class="display-5 fw-bold">Eczane Randevu Sistemine Hoş Geldiniz!</h1>
+            {% if user.is_authenticated %}
+                <p class="fs-4">Merhaba, {{ user.first_name }} {{ user.last_name }}!</p>
+                <p>Randevu işlemlerinizi yandaki menüden yapabilirsiniz.</p>
+            {% else %}
+                <p class="col-md-8 fs-4">Randevu almak veya mevcut randevularınızı görmek için lütfen giriş yapın veya kayıt olun.</p>
+                <a href="{% url 'giris' %}" class="btn btn-primary btn-lg">Giriş Yap</a>
+                <a href="{% url 'kayit_ol' %}" class="btn btn-secondary btn-lg">Kayıt Ol</a>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h2>Mevcut Randevu Saatleri</h2>
+    <hr>
+    {% if randevular %}
+        <div class="list-group">
+            {% for randevu in randevular %}
+                <div class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                    {{ randevu.tarih_saat|date:"d F Y, l - H:i" }}
+                    <form method="POST" action="{% url 'randevu_al' randevu.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-primary btn-sm">Randevu Al</button>
+                    </form>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="alert alert-warning" role="alert">
+            Uygun randevu bulunmamaktadır.
+        </div>
+    {% endif %}
+{% endblock %}

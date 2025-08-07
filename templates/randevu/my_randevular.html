@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h2>Aldığım Randevular</h2>
+    <hr>
+    {% if randevular %}
+        <div class="list-group">
+            {% for randevu in randevular %}
+                <div class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                    <span>{{ randevu.tarih_saat|date:"d F Y, l - H:i" }}</span>
+
+                    <form method="POST" action="{% url 'randevu_iptal' randevu.id %}" onsubmit="return confirm('Bu randevuyu iptal etmek istediğinizden emin misiniz?');">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger btn-sm">İptal Et</button>
+                    </form>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="alert alert-info" role="alert">
+            Henüz alınmış bir randevunuz bulunmamaktadır.
+        </div>
+    {% endif %}
+
+    <hr>
+    <a href="{% url 'randevu_listesi' %}" class="btn btn-primary">Yeni Randevu Al</a>
+    <a href="{% url 'ana_sayfa' %}" class="btn btn-secondary">Ana Sayfaya Dön</a>
+{% endblock %}

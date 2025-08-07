@@ -1,0 +1,13 @@
+body {
+    /* Sayfanın genel arka planını yumuşak, açık bir gri yapıyoruz */
+    background-color: #f8f9fa; 
+}
+
+.content-card {
+    /* Ana içerik alanımızı beyaz bir kart içine alıyoruz */
+    background: #ffffff;
+    padding: 25px;
+    margin-top: 20px;
+    border-radius: 8px; /* Köşeleri yuvarlatıyoruz */
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1); /* Hafif bir gölge ekliyoruz */
+}

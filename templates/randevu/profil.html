@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %} {% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <h2>Profilimi Düzenle</h2>
+        <hr>
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-success" role="alert">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endif %}
+        <form method="post">
+            {% csrf_token %}
+            {% crispy form %} <button type="submit" class="btn btn-success mt-3">Değişiklikleri Kaydet</button>
+        </form>
+    </div>
+</div>
+{% endblock %}
