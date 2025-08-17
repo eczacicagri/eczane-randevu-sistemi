@@ -3,12 +3,30 @@
 {% block content %}
     <h2>Aldığım Randevular</h2>
     <hr>
+    
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-success">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+
     {% if randevular %}
         <div class="list-group">
             {% for randevu in randevular %}
                 <div class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
-                    <span>{{ randevu.tarih_saat|date:"d F Y, l - H:i" }}</span>
-
+                    
+                    <a href="{% url 'randevu_detay' randevu.id %}" class="text-decoration-none text-dark flex-grow-1">
+                        <span>
+                            {{ randevu.tarih_saat|date:"d F Y, l - H:i" }}
+                            
+                            {% if randevu.status == 'onaylandi' %}
+                                <span class="badge bg-success">Onaylandı</span>
+                            {% else %}
+                                <span class="badge bg-warning text-dark">Onay Bekliyor</span>
+                            {% endif %}
+                        </span>
+                    </a>
+                    
                     <form method="POST" action="{% url 'randevu_iptal' randevu.id %}" onsubmit="return confirm('Bu randevuyu iptal etmek istediğinizden emin misiniz?');">
                         {% csrf_token %}
                         <button type="submit" class="btn btn-danger btn-sm">İptal Et</button>

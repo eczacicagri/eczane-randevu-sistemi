@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+    <h3>Randevu Detayı</h3>
+    <p>
+        <strong>Tarih:</strong> {{ randevu.tarih_saat|date:"d F Y, H:i" }}<br>
+        <strong>Temsilci:</strong> {{ randevu.temsilci.first_name }} {{ randevu.temsilci.last_name }}<br>
+        <strong>Firma:</strong> {{ randevu.temsilci.temsilciprofili.firma.ad|default:"-" }}
+    </p>
+    <hr>
+
+    <h4>Bu Görüşmede Sunulan Teklifler</h4>
+    {% if teklifler %}
+        <table class="table table-sm table-bordered">
+            <thead>
+                <tr>
+                    <th>Ürün</th>
+                    <th>Mal Fazlası Şartı</th>
+                    <th>Ekstra İskonto</th>
+                    <th>Eczacı Değerlendirmesi</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for teklif in teklifler %}
+                <tr>
+                    <td>{{ teklif.urun.ad }}</td>
+                    <td>{{ teklif.mal_fazlasi_sarti }}</td>
+                    <td>{{ teklif.ekstra_iskonto }}</td>
+                    <td>{{ teklif.eczaci_degerlendirmesi }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p class="text-muted">Bu randevu için henüz bir teklif kaydedilmemiş.</p>
+    {% endif %}
+
+    <hr>
+
+    <h4>Yeni Teklif Ekle/Düzenle</h4>
+    <form method="post">
+        {% csrf_token %}
+        {% for field in form %}
+            {{ field|as_crispy_field }}
+        {% endfor %}
+        <button type="submit" class="btn btn-primary mt-2">Teklifi Kaydet</button>
+    </form>
+{% endblock %}

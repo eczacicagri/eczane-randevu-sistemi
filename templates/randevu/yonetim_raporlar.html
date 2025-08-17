@@ -1,0 +1,122 @@
+{% extends 'base.html' %}
+
+{% block extra_head %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{% endblock %}
+
+{% block content %}
+<h2>Raporlar</h2>
+<p class="text-muted">Tarih aralığına göre özetler ve dağılımlar.</p>
+<hr>
+
+<form class="row g-2 align-items-end mb-3" method="get">
+  <div class="col-auto">
+    <label class="form-label">Başlangıç</label>
+    <input type="date" class="form-control" name="start" value="{{ start }}">
+  </div>
+  <div class="col-auto">
+    <label class="form-label">Bitiş</label>
+    <input type="date" class="form-control" name="end" value="{{ end }}">
+  </div>
+  <div class="col-auto">
+    <button class="btn btn-outline-primary" type="submit">Filtrele</button>
+    <a class="btn btn-outline-secondary" href="{% url 'yonetim_raporlar' %}">Sıfırla</a>
+  </div>
+</form>
+
+<div class="row g-4">
+  <div class="col-12">
+    <div class="card p-3">
+      <h5>Günlük Toplam</h5>
+      <canvas id="chartTotal"></canvas>
+    </div>
+  </div>
+  <div class="col-12">
+    <div class="card p-3">
+      <h5>Günlük Durum Dağılımı</h5>
+      <canvas id="chartStatus"></canvas>
+    </div>
+  </div>
+
+  <div class="col-lg-6">
+    <div class="card p-3">
+      <h5>En Çok Randevusu Olan Temsilciler</h5>
+      <table class="table table-sm align-middle mb-0">
+        <thead><tr><th>Temsilci</th><th class="text-end">Toplam</th></tr></thead>
+        <tbody>
+          {% for t in per_temsilci %}
+            <tr>
+              <td>{{ t.temsilci__first_name }} {{ t.temsilci__last_name }} ({{ t.temsilci__username }})</td>
+              <td class="text-end">{{ t.total }}</td>
+            </tr>
+          {% empty %}
+            <tr><td colspan="2" class="text-center">Kayıt yok</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="col-lg-6">
+    <div class="card p-3">
+      <h5>Firmalara Göre Dağılım</h5>
+      <table class="table table-sm align-middle mb-0">
+        <thead><tr><th>Firma</th><th class="text-end">Toplam</th></tr></thead>
+        <tbody>
+          {% for f in per_firma %}
+            <tr>
+              <td>{{ f.temsilci__temsilciprofili__firma__ad }}</td>
+              <td class="text-end">{{ f.total }}</td>
+            </tr>
+          {% empty %}
+            <tr><td colspan="2" class="text-center">Kayıt yok</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+const labels = {{ labels|safe }};
+const totals = {{ totals|safe }};
+const bek = {{ bek|safe }};
+const onay = {{ onay|safe }};
+const tam = {{ tam|safe }};
+const gel = {{ gel|safe }};
+
+// Günlük toplam
+new Chart(document.getElementById('chartTotal'), {
+  type: 'line',
+  data: {
+    labels: labels,
+    datasets: [{ label: 'Toplam', data: totals }]
+  },
+  options: {
+    responsive: true,
+    scales: { y: { beginAtZero: true } }
+  }
+});
+
+// Günlük durum dağılımı
+new Chart(document.getElementById('chartStatus'), {
+  type: 'bar',
+  data: {
+    labels: labels,
+    datasets: [
+      { label: 'Beklemede', data: bek },
+      { label: 'Onaylandı', data: onay },
+      { label: 'Tamamlandı', data: tam },
+      { label: 'Gelinmedi', data: gel },
+    ]
+  },
+  options: {
+    responsive: true,
+    scales: { y: { beginAtZero: true } }
+  }
+});
+</script>
+{% endblock %}

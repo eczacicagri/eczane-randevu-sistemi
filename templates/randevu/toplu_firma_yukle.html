@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-8">
+    <h2>Toplu Firma Yükle (.csv)</h2>
+    <hr>
+
+    {% if messages %}
+      {% for message in messages %}
+        <div class="alert alert-{% if message.tags %}{{ message.tags }}{% else %}info{% endif %}">{{ message }}</div>
+      {% endfor %}
+    {% endif %}
+
+    <div class="alert alert-info">
+      <strong>Nasıl Kullanılır?</strong>
+      <ol class="mb-2">
+        <li>Excel veya benzeri bir programda bir dosya oluşturun.</li>
+        <li>İlk satıra başlık yazın (Örn: <em>Firma Adları</em>). Bu satır dikkate alınmayacaktır.</li>
+        <li>Sadece ilk sütunu (A Sütunu) kullanarak alt alta firma isimlerini yazın.</li>
+        <li>Dosyayı <strong>CSV (Virgülle Ayrılmış)</strong> formatında kaydedin.</li>
+        <li>Oluşturduğunuz .csv dosyasını aşağıdan seçip yükleyin.</li>
+      </ol>
+      <a class="btn btn-sm btn-outline-secondary" href="{% url 'ornek_firma_csv' %}">Örnek CSV indir</a>
+    </div>
+
+    <form method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      <div class="mb-3">
+        <label for="csv_file" class="form-label">Firma Listesi (.csv dosyası)</label>
+        <input class="form-control" type="file" id="csv_file" name="csv_file" accept=".csv" required>
+      </div>
+      <button type="submit" class="btn btn-primary">Yükle ve Kaydet</button>
+    </form>
+  </div>
+</div>
+{% endblock %}
