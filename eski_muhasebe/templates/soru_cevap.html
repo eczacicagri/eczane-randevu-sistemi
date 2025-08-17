@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>Yapay Zekâ Soru-Cevap</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body { font-family: sans-serif; padding: 20px; background: #f4f4f4; }
+        .kutu { background: white; padding: 20px; border-radius: 10px; max-width: 600px; margin: auto; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
+        .kutu h2 { margin-top: 0; }
+        .btn { padding: 10px 15px; background: #3498db; color: white; border: none; border-radius: 5px; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+<div class="kutu">
+    <h2>🧠 Yapay Zekâ Destekli Soru-Cevap</h2>
+    <form method="post">
+        <input type="text" name="soru" placeholder="Bir soru yazın..." style="width:100%; padding:10px;" required>
+        <br><br>
+        <button type="submit" class="btn">Soruyu Gönder</button>
+    </form>
+
+    {% if cevap %}
+        <hr>
+        <p><strong>Cevap:</strong> {{ cevap }}</p>
+    {% endif %}
+</div>
+
+</body>
+</html>

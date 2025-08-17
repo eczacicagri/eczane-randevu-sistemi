@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ tablo_adi }} Tablosu</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body {
+            font-family: Arial;
+            background-color: #f0f2f5;
+            padding: 15px;
+            margin: 0;
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .tablo {
+            overflow-x: auto;
+            background: white;
+            padding: 10px;
+            border-radius: 10px;
+            box-shadow: 0 0 5px rgba(0,0,0,0.1);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+        th, td {
+            padding: 8px;
+            border: 1px solid #ccc;
+            text-align: center;
+        }
+        th {
+            background: #0078D7;
+            color: white;
+        }
+        a {
+            display: block;
+            text-align: center;
+            margin: 20px auto;
+            text-decoration: none;
+            color: #0078D7;
+        }
+    </style>
+</head>
+<body>
+    <h2>{{ tablo_adi }} Tablosu</h2>
+    <div class="tablo">
+        <table>
+            <thead>
+                <tr>
+                    {% for kolon in kolonlar %}
+                        <th>{{ kolon }}</th>
+                    {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for satir in veri %}
+                    <tr>
+                        {% for kolon in kolonlar %}
+                            <td>{{ satir[kolon] }}</td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <a href="/">🔙 Ana Sayfa</a>
+</body>
+</html>

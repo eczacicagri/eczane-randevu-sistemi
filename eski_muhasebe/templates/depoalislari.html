@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>Depo Alışları</title>
+    <style>
+        body { font-family: Arial; background-color: #f7f7f7; padding: 20px; }
+        table { width: 100%; border-collapse: collapse; background: white; }
+        th, td { border: 1px solid #ccc; padding: 8px; text-align: center; }
+        th { background-color: #0078D7; color: white; }
+        h2 { text-align: center; margin-bottom: 20px; }
+        a { display: inline-block; margin-bottom: 10px; color: #0078D7; }
+    </style>
+</head>
+<body>
+    <h2>📦 Depo Alışları</h2>
+    <a href="/">← Ana Sayfa</a>
+    <table>
+        <thead>
+            <tr>
+                <th>Tarih</th>
+                <th>Firma</th>
+                <th>Ürün</th>
+                <th>Miktar</th>
+                <th>Birim Fiyat</th>
+                <th>Toplam</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for a in alislar %}
+            <tr>
+                <td>{{ a['tarih'] }}</td>
+                <td>{{ a['firma'] }}</td>
+                <td>{{ a['urun_adi'] }}</td>
+                <td>{{ a['miktar'] }}</td>
+                <td>{{ "%.2f"|format(a['birim_fiyat']) }}</td>
+                <td>{{ "%.2f"|format(a['toplam_tutar']) }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

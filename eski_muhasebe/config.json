@@ -1,0 +1,38 @@
+{
+    "tema": "litera",
+    "custom_tema_renkleri": {
+        "bg": "#F0F0F0",
+        "fg": "black",
+        "entry_bg": "white",
+        "accent_bg": "#0078D7",
+        "accent_fg": "white",
+        "odendi_bg": "#C8E6C9",
+        "odenmedi_bg": "#FFCDD2",
+        "btn_yesil": "#4CAF50",
+        "btn_kirmizi": "#f44336",
+        "btn_mavi": "#0078D7",
+        "btn_turuncu": "#FF9800",
+        "btn_gri": "#607D8B"
+    },
+    "gider_kategorileri": [
+        "Kira",
+        "Maaş",
+        "Fatura (Elektrik, Su, vb.)",
+        "Vergi",
+        "Yemek",
+        "Temizlik",
+        "Ofis Malzemesi",
+        "Diğer"
+    ],
+    "satis_tipleri": [
+        "SGK A Grubu",
+        "SGK B Grubu",
+        "SGK C Grubu",
+        "Sıralı Dağıtım",
+        "Kan Ürünü",
+        "Farmazon",
+        "Diğer"
+    ],
+    "efatura_kullanici_adi": "8680001429554",
+    "efatura_sifre": "1986C.agri1986"
+}

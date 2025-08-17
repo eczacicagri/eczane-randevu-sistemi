@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<div class="landing-container">
+    
+    <div class="landing-logo">
+        <img src="{% static 'images/portecza.png' %}" alt="PortEcza Logo">
+    </div>
+
+    <h1 class="landing-title">PortEcza Araştırma Paneline Hoş Geldiniz</h1>
+    
+    <p class="landing-subtitle">Lütfen devam etmek için giriş yapın.</p>
+    
+    <a href="{% url 'giris' %}" class="landing-button">Giriş Yap</a>
+
+</div>
+
+{% endblock %}

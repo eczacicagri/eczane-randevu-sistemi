@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>Satışlar</title>
+    <style>
+        body { font-family: Arial; background-color: #f7f7f7; padding: 20px; }
+        table { width: 100%; border-collapse: collapse; background: white; }
+        th, td { border: 1px solid #ccc; padding: 8px; text-align: center; }
+        th { background-color: #0078D7; color: white; }
+        h2 { text-align: center; margin-bottom: 20px; }
+        a { display: inline-block; margin-bottom: 10px; color: #0078D7; }
+    </style>
+</head>
+<body>
+    <h2>📋 Son 50 Satış</h2>
+    <a href="/">← Ana Sayfaya Dön</a>
+    <table>
+        <thead>
+            <tr>
+                <th>Tarih</th>
+                <th>Ürün</th>
+                <th>Miktar</th>
+                <th>Birim Fiyat</th>
+                <th>Toplam</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for s in satislar %}
+            <tr>
+                <td>{{ s['tarih'] }}</td>
+                <td>{{ s['urun_adi'] }}</td>
+                <td>{{ s['miktar'] }}</td>
+                <td>{{ "%.2f"|format(s['birim_fiyat']) }}</td>
+                <td>{{ "%.2f"|format(s['genel_toplam']) }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

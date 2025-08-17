@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>Rüya Eczane Panel</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body { font-family: Arial, sans-serif; padding: 15px; margin: 0; background: #f9f9f9; }
+        h1 { color: #444; }
+        .kutu {
+            background: white;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .btn {
+            display: inline-block;
+            padding: 8px 12px;
+            background: #3498db;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin: 5px 5px 5px 0;
+        }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { padding: 8px; border: 1px solid #ddd; text-align: left; }
+        th { background-color: #f0f0f0; }
+        @media (max-width: 768px) {
+            table, thead, tbody, th, td, tr {
+                display: block;
+            }
+            td { border: none; border-bottom: 1px solid #eee; }
+        }
+    </style>
+</head>
+<body>
+
+<h1>💊 Rüya Eczane Panel</h1>
+
+<div class="kutu">
+    <form method="post">
+        <label>Başlangıç Tarihi:</label>
+        <input type="date" name="start_date" value="{{ start_date }}">
+        <label>Bitiş Tarihi:</label>
+        <input type="date" name="end_date" value="{{ end_date }}">
+        <button type="submit">Filtrele</button>
+    </form>
+</div>
+
+<div class="kutu">
+    <h2>📊 Finansal Özet</h2>
+    <p><strong>Gelir:</strong> {{ gelir }} TL</p>
+    <p><strong>Gider:</strong> {{ gider }} TL</p>
+    <p><strong>Net Bakiye:</strong> {{ net }} TL</p>
+</div>
+
+<div class="kutu">
+    <h2>📈 Kasa Hareketleri Grafiği</h2>
+    <canvas id="kasaChart"></canvas>
+</div>
+
+<!-- Akıllı Öneriler -->
+<div class="kutu">
+    <h2>🧠 Akıllı Öneriler</h2>
+    {% if analiz_raporu %}
+        <ul>
+        {% for yorum in analiz_raporu %}
+            <li>{{ yorum }}</li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>Henüz analiz yapılacak veri bulunamadı.</p>
+    {% endif %}
+</div>
+
+<div class="kutu">
+    <h2>💼 Günlük Kasa</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Tarih</th>
+                <th>Nakit</th>
+                <th>Kart</th>
+                <th>Toplam</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for k in kasa_listesi %}
+            <tr>
+                <td>{{ k.tarih }}</td>
+                <td>{{ k.nakit_tutar }}</td>
+                <td>{{ k.kart_tutar }}</td>
+                <td>{{ k.toplam_tutar }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div class="kutu">
+    <h2>📂 Tablo Geçişleri</h2>
+    {% for tablo in tablolar %}
+        <a class="btn" href="/tablo/{{ tablo }}">{{ tablo }}</a>
+    {% endfor %}
+</div>
+<a class="btn" href="/soru-cevap">🧠 Soru-Cevap Yapay Zekâ</a>
+<a class="btn" href="/logout">Çıkış Yap</a>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const data = {{ grafik_data | safe }};
+    const ctx = document.getElementById('kasaChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: data.labels,
+            datasets: [
+                {
+                    label: 'Nakit',
+                    data: data.nakit,
+                    borderColor: 'green',
+                    fill: false
+                },
+                {
+                    label: 'Kart',
+                    data: data.kart,
+                    borderColor: 'blue',
+                    fill: false
+                },
+                {
+                    label: 'Toplam',
+                    data: data.toplam,
+                    borderColor: 'black',
+                    fill: false
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: { beginAtZero: true }
+            }
+        }
+    });
+</script>
+
+</body>
+</html>
