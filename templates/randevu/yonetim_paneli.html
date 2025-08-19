@@ -75,18 +75,25 @@
             <span class="badge bg-secondary">Gelinmedi</span>
           {% endif %}
         </td>
+        
         <td class="text-end">
-          {% if r.status == 'onaylandi' %}
-            <a href="{% url 'yonetim_randevu_tamamla' r.id %}" class="btn btn-info btn-sm">Tamamlandı</a>
-          {% endif %}
-          {% if r.status == 'beklemede' %}
-            <a href="{% url 'yonetim_randevu_onayla' r.id %}" class="btn btn-success btn-sm">Onayla</a>
-          {% endif %}
-          {% if r.status == 'beklemede' or r.status == 'onaylandi' %}
-            <a href="{% url 'yonetim_randevu_iptal' r.id %}" class="btn btn-danger btn-sm">İptal Et</a>
-          {% endif %}
+            {% if r.status == 'onaylandi' %}
+                {# Sadece saati geçmiş randevular için Gelinmedi veya Tamamlandı seçenekleri görünür #}
+                {% if r.tarih_saat < now %}
+                    <a href="{% url 'yonetim_randevu_tamamla' r.id %}" class="btn btn-info btn-sm">Tamamlandı</a>
+                    <a href="{% url 'yonetim_randevu_gelinmedi' r.id %}" class="btn btn-secondary btn-sm">Gelinmedi</a>
+                {% endif %}
+            {% endif %}
+
+            {% if r.status == 'beklemede' %}
+                <a href="{% url 'yonetim_randevu_onayla' r.id %}" class="btn btn-success btn-sm">Onayla</a>
+            {% endif %}
+            
+            {% if r.status == 'beklemede' or r.status == 'onaylandi' %}
+                <a href="{% url 'yonetim_randevu_iptal' r.id %}" class="btn btn-danger btn-sm">İptal Et</a>
+            {% endif %}
         </td>
-      </tr>
+        </tr>
       {% empty %}
       <tr><td colspan="5" class="text-center">Kayıt yok.</td></tr>
       {% endfor %}

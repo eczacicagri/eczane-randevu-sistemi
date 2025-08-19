@@ -9,7 +9,7 @@ urlpatterns = [
     path('', views.ana_sayfa, name='ana_sayfa'),
     path('kayit/', views.kayit_ol, name='kayit_ol'),
     path('giris/', auth_views.LoginView.as_view(template_name='randevu/giris.html'), name='giris'),
-    path('cikis/', auth_views.LogoutView.as_view(next_page='ana_sayfa'), name='cikis'),
+    path('cikis/', auth_views.LogoutView.as_view(next_page='https://www.portecza.com/'), name='cikis'),
     path('profil/', views.profil_guncelle, name='profil_guncelle'),
 
     # Randevu İşlemleri
@@ -38,7 +38,9 @@ urlpatterns = [
 
     # YENİ: Boş slot toplu sil (tarih aralığı)
     path('yonetim/bos-toplu-sil/', views.yonetim_bos_toplu_sil, name='yonetim_bos_toplu_sil'),
-
+    # Çağrı ekledi: randevu gelinmedi urls kodu
+    path('yonetim/gelinmedi/<int:randevu_id>/', views.yonetim_randevu_gelinmedi, name='yonetim_randevu_gelinmedi'),
+    path('yonetim/toplu-randevu/', views.toplu_randevu_olustur, name='toplu_randevu_olustur'),
     # YENİ: Raporlar
     path('yonetim/raporlar/', views.yonetim_raporlar, name='yonetim_raporlar'),
 ]

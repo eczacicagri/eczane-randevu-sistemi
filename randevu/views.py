@@ -13,6 +13,7 @@ from django.db.models import Count, Q
 from django.db.models.functions import TruncDate
 import csv
 import io
+from django.utils import timezone
 
 from .forms import KayitFormu, TemsilciProfiliFormu, TopluRandevuFormu, TeklifFormu
 from .models import Randevu, Firma, Urun, Teklif
@@ -162,6 +163,7 @@ def yonetim_paneli(request):
         'end': end or '',
         'q_temsilci': q_temsilci,
         'q_firma': q_firma,
+        'now': timezone.now()
     }
     return render(request, 'randevu/yonetim_paneli.html', context)
 
@@ -178,6 +180,24 @@ def yonetim_randevu_onayla(request, randevu_id):
     messages.success(request, 'Randevu başarıyla onaylandı.')
     return redirect('yonetim_paneli')
 
+@login_required
+@user_passes_test(lambda u: u.is_superuser)
+def yonetim_randevu_gelinmedi(request, randevu_id):
+    randevu = get_object_or_404(Randevu, id=randevu_id)
+
+    # Sadece onaylanmış ve geçmiş tarihli randevular işaretlenebilir
+    if randevu.status != 'onaylandi':
+        messages.error(request, 'Sadece "Onaylandı" durumundaki randevular "Gelinmedi" olarak işaretlenebilir.')
+        return redirect('yonetim_paneli')
+
+    if randevu.tarih_saat > timezone.now():
+        messages.error(request, 'Henüz vakti gelmemiş bir randevu "Gelinmedi" olarak işaretlenemez.')
+        return redirect('yonetim_paneli')
+
+    randevu.status = 'gelinmedi'
+    randevu.save()
+    messages.info(request, 'Randevu "Gelinmedi" olarak işaretlendi.')
+    return redirect('yonetim_paneli')
 
 @login_required
 @user_passes_test(lambda u: u.is_superuser)
