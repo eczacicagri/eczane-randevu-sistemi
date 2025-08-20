@@ -15,15 +15,12 @@ ALLOWED_HOSTS = [
     'randevu.portecza.com',
 ]
 
-# --- YENİ EKLENEN AYAR ---
-# Portal projesinin alan adından gelen isteklere güven.
-# Bu ayar, alt alan adları (subdomain) arasında geçiş yaparken oluşan
-# 400 Bad Request (CSRF) hatasını çözer.
+
 CSRF_TRUSTED_ORIGINS = [
     'https://www.portecza.com',
     'https://portecza.com',
 ]
-# --- YENİ EKLENEN AYAR BİTİŞİ ---
+
 
 
 INSTALLED_APPS = [

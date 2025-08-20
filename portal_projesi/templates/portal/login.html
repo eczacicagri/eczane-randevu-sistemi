@@ -1,4 +1,6 @@
 {% extends 'base.html' %}
+{% load crispy_forms_tags %} {# crispy_forms etiketlerini yüklüyoruz #}
+
 {% block content %}
     <div class="row justify-content-center">
         <div class="col-md-5">
@@ -7,8 +9,8 @@
                     <h3 class="card-title text-center">Giriş Yap</h3>
                     <form method="post">
                         {% csrf_token %}
-                        {{ form.as_p }}
-                        <button type="submit" class="btn btn-primary w-100">Giriş</button>
+                        {{ form|crispy }}
+                        <button type="submit" class="btn btn-primary w-100 mt-3">Giriş</button>
                     </form>
                 </div>
             </div>

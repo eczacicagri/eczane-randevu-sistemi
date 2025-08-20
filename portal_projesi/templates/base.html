@@ -11,12 +11,17 @@
     
     <link rel="stylesheet" href="{% static 'css/style.css' %}">
 </head>
-<body class="bg-light">
+<body class="bg-light d-flex flex-column min-vh-100">
 
-    <main class="container mt-5">
+    <main class="container mt-5 flex-grow-1">
         {% block content %}{% endblock %}
     </main>
 
+    <footer class="mt-auto py-3 text-center">
+        <div class="container">
+            <span class="text-muted small">Ecz.Çağrı ASLAN tarafından geliştirilmiştir.</span>
+        </div>
+    </footer>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

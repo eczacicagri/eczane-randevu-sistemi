@@ -73,17 +73,18 @@ class Randevu(models.Model):
 
 class Urun(models.Model):
     firma = models.ForeignKey(Firma, on_delete=models.CASCADE, related_name='urunler')
+    barkod = models.CharField(max_length=100, unique=True, null=True, blank=True, help_text="Ürünün benzersiz barkodu")
     ad = models.CharField(max_length=255)
     aciklama = models.TextField(blank=True, null=True)
 
     class Meta:
         ordering = ['ad']
-        unique_together = ('firma', 'ad')
         verbose_name = "Ürün"
         verbose_name_plural = "Ürünler"
 
     def __str__(self):
-        return self.ad
+        return f"{self.ad} ({self.barkod})"
+
 
 
 class Teklif(models.Model):

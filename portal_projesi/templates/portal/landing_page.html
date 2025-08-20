@@ -11,9 +11,12 @@
 
     <h1 class="landing-title">PortEcza Araştırma Paneline Hoş Geldiniz</h1>
     
-    <p class="landing-subtitle">Lütfen devam etmek için giriş yapın.</p>
+    <p class="landing-subtitle">Lütfen devam etmek için giriş yapın veya yeni hesap oluşturun.</p>
     
-    <a href="{% url 'giris' %}" class="landing-button">Giriş Yap</a>
+    <div class="d-grid gap-2 col-6 mx-auto">
+        <a href="{% url 'giris' %}" class="btn btn-primary btn-lg">Giriş Yap</a>
+        <a href="https://randevu.portecza.com/kayit/" class="btn btn-outline-secondary btn-lg">Kayıt Ol</a>
+    </div>
 
 </div>
 

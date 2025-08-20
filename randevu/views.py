@@ -1,5 +1,6 @@
 # randevu/views.py
 
+import pandas as pd
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required, user_passes_test
@@ -13,7 +14,8 @@ from django.db.models import Count, Q
 from django.db.models.functions import TruncDate
 import csv
 import io
-from django.utils import timezone
+from django.contrib.auth import logout
+from django.http import HttpResponseRedirect
 
 from .forms import KayitFormu, TemsilciProfiliFormu, TopluRandevuFormu, TeklifFormu
 from .models import Randevu, Firma, Urun, Teklif
@@ -279,51 +281,82 @@ def toplu_firma_yukle(request):
     return render(request, 'randevu/toplu_firma_yukle.html')
 
 
+
+
 @login_required
 @user_passes_test(lambda u: u.is_superuser)
 def toplu_urun_yukle(request):
     if request.method == 'POST' and request.FILES.get('csv_file'):
-        csv_file = request.FILES['csv_file']
-        if not csv_file.name.endswith('.csv'):
-            messages.error(request, 'Hata: Lütfen .csv uzantılı bir dosya yükleyin.')
+        uploaded_file = request.FILES['csv_file']
+
+        # Dosya uzantısını küçük harfe çevirerek kontrol et
+        if not (uploaded_file.name.lower().endswith('.csv') or uploaded_file.name.lower().endswith('.xlsx')):
+            messages.error(request, 'Hata: Lütfen .csv veya .xlsx uzantılı bir dosya yükleyin.')
             return redirect('toplu_urun_yukle')
+
+        eklenen_sayisi = 0
+        guncellenen_sayisi = 0
+        hatalar = []
+
         try:
-            decoded_file = csv_file.read().decode('utf-8')
-            io_string = io.StringIO(decoded_file)
-            next(io_string, None)  # başlık satırını atla
-            reader = csv.reader(io_string, delimiter=',')
-            eklenen_sayisi = 0
-            mevcut_sayisi = 0
-            hatalar = []
-            for row in reader:
+            df = None # df değişkenini başlangıçta tanımla
+            if uploaded_file.name.lower().endswith('.csv'):
+                df = pd.read_csv(uploaded_file, delimiter=';')
+            else:
+                df = pd.read_excel(uploaded_file)
+
+            # Sütun adlarını temizle ve büyük harfe çevir
+            df.columns = [str(col).strip().upper() for col in df.columns]
+
+            # --- DEĞİŞİKLİK: Yeni sütun başlıklarını kontrol et ---
+            required_cols = {'BARKOD', 'ILAC', 'FIRMA'}
+            if not required_cols.issubset(df.columns):
+                messages.error(request, f'Hata: Dosyada {required_cols} sütun başlıkları bulunmalıdır.')
+                return redirect('toplu_urun_yukle')
+
+            for index, row in df.iterrows():
                 try:
-                    firma_adi = (row[0] or '').strip()
-                    urun_adi = (row[1] or '').strip()
-                    barkod = (row[2] or '').strip()
-                    if not all([firma_adi, urun_adi, barkod]):
-                        hatalar.append(f"Satır atlandı (boş hücre var): {row}")
+                    # --- DEĞİŞİKLİK: Yeni sütun başlıklarını kullan ---
+                    barkod = str(row['BARKOD']).strip()
+                    urun_adi = str(row['ILAC']).strip()
+                    firma_adi = str(row['FIRMA']).strip()
+
+                    if not all([firma_adi, barkod, urun_adi]):
+                        hatalar.append(f"{index + 2}. satır atlandı (boş hücre var).")
                         continue
+
                     firma, _ = Firma.objects.get_or_create(ad=firma_adi)
-                    # basit varyant: barkod'u modelde alan olarak kullanmıyoruz
-                    _, olusturuldu = Urun.objects.get_or_create(
-                        firma=firma,
-                        ad=urun_adi,
+
+                    urun, olusturuldu = Urun.objects.update_or_create(
+                        barkod=barkod,
+                        defaults={'firma': firma, 'ad': urun_adi}
                     )
+
                     if olusturuldu:
                         eklenen_sayisi += 1
                     else:
-                        mevcut_sayisi += 1
-                except IndexError:
-                    hatalar.append(f"Satır atlandı (eksik sütun var): {row}")
-            mesaj = f'İşlem tamamlandı. {eklenen_sayisi} yeni ürün eklendi, {mevcut_sayisi} ürün zaten mevcuttu.'
+                        guncellenen_sayisi += 1
+
+                except Exception as e:
+                    hatalar.append(f"{index + 2}. satırda beklenmedik hata: {e}")
+
+            mesaj = (f'İşlem tamamlandı. {eklenen_sayisi} yeni ürün eklendi, '
+                     f'{guncellenen_sayisi} mevcut ürün güncellendi.')
+
             if hatalar:
                 mesaj += f" {len(hatalar)} satırda hata oluştu."
-            messages.success(request, mesaj)
-        except Exception as e:
-            messages.error(request, f'Dosya okunurken bir hata oluştu: {e}')
-        return redirect('toplu_urun_yukle')
-    return render(request, 'randevu/toplu_urun_yukle.html')
+                request.session['upload_errors'] = hatalar[:10]
 
+            messages.success(request, mesaj)
+
+        except Exception as e:
+            messages.error(request, f'Dosya işlenirken bir hata oluştu: {e}')
+
+        return redirect('toplu_urun_yukle')
+
+    upload_errors = request.session.pop('upload_errors', None)
+    context = {'upload_errors': upload_errors}
+    return render(request, 'randevu/toplu_urun_yukle.html', context)
 
 @login_required
 def randevu_detay(request, randevu_id):
@@ -469,7 +502,19 @@ def yonetim_raporlar(request):
         base = base.filter(tarih_saat__date__gte=start)
     if end:
         base = base.filter(tarih_saat__date__lte=end)
+def cikis_yap(request):
+    """
+    Kullanıcının oturumunu sonlandıran ve onu ana portal sayfasına yönlendiren
+    özel çıkış yapma fonksiyonu.
+    """
+    # Django'nun dahili logout fonksiyonunu kullanarak oturumu kapat
+    logout(request)
 
+    # Kullanıcıya bir mesaj göster
+    messages.success(request, 'Başarıyla çıkış yaptınız.')
+
+    # Kullanıcıyı HttpResponseRedirect ile doğrudan ana portalın URL'ine yönlendir
+    return HttpResponseRedirect('https://www.portecza.com/')
     # Günlük özet
     gunluk = (
         base

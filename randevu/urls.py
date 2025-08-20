@@ -9,7 +9,7 @@ urlpatterns = [
     path('', views.ana_sayfa, name='ana_sayfa'),
     path('kayit/', views.kayit_ol, name='kayit_ol'),
     path('giris/', auth_views.LoginView.as_view(template_name='randevu/giris.html'), name='giris'),
-    path('cikis/', auth_views.LogoutView.as_view(next_page='https://www.portecza.com/'), name='cikis'),
+    path('cikis/', views.cikis_yap, name='cikis'),
     path('profil/', views.profil_guncelle, name='profil_guncelle'),
 
     # Randevu İşlemleri
